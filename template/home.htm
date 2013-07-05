@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Template</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" href="../common/css/common.css" />
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<script language="javascript" type="text/javascript" src="../common/js/jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="../common/js/jquery-ui.js"></script>
+	<script language="javascript" type="text/javascript" src="../common/js/common.js"></script>
+	<script language="javascript" type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>
+	<script language="javascript" type="text/javascript" src="../common/js/facebook.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="navigation">
+			<ul>
+				<li><a href="#">Home</a></li>
+				<li><a href="#">Products</a></li>
+				<li><a href="#">FAQ</a></li>
+			</ul>
+		</div>
+		<div id="header">
+			<div id="logo">
+				<img src="images/logo.jpg" width="135" height="135" alt="Logo" />
+			</div>
+			<div id="logoTitle">
+				<img src="images/site_title.jpg" width="316" height="53" alt="Site Title" />
+			</div>
+			<div class="clear"></div>
+			<div id="banner">
+				<a id="btnPrevBanner" href="#"><span>Prev</span></a>
+				<a id="btnNextBanner" href="#"><span>Next</span></a>
+				<ul>
+					<li>
+						<img src="images/banner_item1.jpg" width="798" height="432" alt="Item 1" />
+						<div class="desc">
+							This is description for item 1.
+						</div>
+					</li>
+					<li>
+						<img src="images/banner_item2.jpg" width="798" height="432" alt="Item 2" />
+						<div class="desc">
+							This is description for item 2.
+						</div>
+					</li>
+					<li>
+						<img src="images/banner_item3.jpg" width="798" height="432" alt="Item 3" />
+						<div class="desc">
+							This is description for item 3.
+						</div>
+					</li>
+					<li>
+						<img src="images/banner_item4.jpg" width="798" height="432" alt="Item 4" />
+						<div class="desc">
+							This is description for item 4.
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div id="bannerSlotIndicator">
+				<ul>
+					<li><span>Item 1</span></li>
+					<li><span>Item 2</span></li>
+					<li><span>Item 3</span></li>
+					<li><span>Item 4</span></li>
+				</ul>
+			</div>
+		</div>
+		<div id="content">
+			<h2>Featured Campaigned</h2>
+			<div class="gallery">
+				<ul>
+					<li>
+						<a href="#1">
+							<img class="main" src="images/gallery_item1.jpg" width="373" height="270" alt="Item 1" />
+							<img class="description" src="images/gallery_desc_item1.png" width="373" height="270" alt="Item 1 Desc" />
+						</a>
+					</li>
+					<li>
+						<a href="#2">
+							<img class="main" src="images/gallery_item2.jpg" width="373" height="270" alt="Item 2" />
+							<img class="description" src="images/gallery_desc_item2.png" width="373" height="270" alt="Item 2 Desc" />
+						</a>
+					</li>
+					<li>
+						<a href="#3">
+							<img class="main" src="images/gallery_item3.jpg" width="373" height="270" alt="Item 3" />
+							<img class="description" src="images/gallery_desc_item3.png" width="373" height="270" alt="Item 3 Desc" />
+						</a>
+					</li>
+					<li>
+						<a href="#4">
+							<img class="main" src="images/gallery_item4.jpg" width="373" height="270" alt="Item 4" />
+							<img class="description" src="images/gallery_desc_item4.png" width="373" height="270" alt="Item 4 Desc" />
+						</a>
+					</li>
+				</ul>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div id="footer">
+			Copyright &copy; information goes here. All rights reserved.
+		</div>
+	</div>
+	<div id="fb-root"></div>
+	<script language="javascript" type="text/javascript">
+		var curBanner;
+		var totalBanner;
+		var animTimer;
+		var autoBannerScroll = true;
+		var topOffset = -100;
+		var animScrollToDelay = 500;
+		var animBannerInterval = 6000;
+		var animBannerDelay = 500;
+		var animGalleryHoverDelay = 200;
+		
+		fbInit('221371547969690');
+		fbSetAutoResize();
+		
+		$(function(){
+			bindBannerAnimation();
+			bindGalleryItemsAnimation();
+			updateItemSlotIndicator();
+			bindGalleryEvt();
+		});
+		
+		function bindBannerAnimation(){
+			var totalItems = $('#banner ul').find('li').length;
+			var bannerWidth = $('#banner').width();
+			var bannerScrollWidth = totalItems * bannerWidth;
+		
+			//setup defaults
+			window.curBanner = 1;
+			window.totalBanner = totalItems;
+			
+			//bind the width for the scroller first
+			$('#banner ul').width(bannerScrollWidth);
+			
+			//bind button scrollers
+			$('#btnPrevBanner').click(function(e){
+				e.preventDefault();
+				scrollBanner(false);
+			});
+			$('#btnNextBanner').click(function(e){
+				e.preventDefault();
+				scrollBanner(true);
+			});
+			
+			if(autoBannerScroll){
+				animTimer = setInterval(function(){
+					scrollBanner(true);
+				}, animBannerInterval);
+			}
+		}
+		
+		function updateItemSlotIndicator(){
+			var slotIndicatorCon = $('#bannerSlotIndicator');
+			$(slotIndicatorCon).find('ul li').removeClass('selected');
+			$(slotIndicatorCon).find('ul li:nth('+(window.curBanner-1)+')').addClass('selected');
+		}
+	
+		function scrollBanner(isForward){
+			var bannerContainer = $('#banner ul');
+			var prevBanner = window.curBanner;
+			
+			//stop if still in animate progress
+			if($(bannerContainer).hasClass('animating'))
+				return;
+			
+			//determine the direction to go
+			if(isForward){
+				if(window.curBanner == window.totalBanner)
+					window.curBanner = 1;
+				else
+					window.curBanner++;
+			}else{
+				if(window.curBanner == 1)
+					window.curBanner = window.totalBanner;
+				else
+					window.curBanner--;
+			}
+					
+			var targetPanel = $(bannerContainer).find('li:nth('+(window.curBanner-1)+')').position().left;
+			var totalJumps = Math.abs(window.curBanner - prevBanner);
+			var bannerLeftLoc = 0 - targetPanel;
+			
+			$(bannerContainer).addClass('animating');
+			$(bannerContainer).stop(true, true).animate({
+				'left': bannerLeftLoc+'px'
+			}, window.animBannerDelay * totalJumps, function(){
+				$(this).removeClass('animating');
+				updateItemSlotIndicator();
+			});
+		}
+		
+		function bindGalleryItemsAnimation(){
+			$('.gallery a').hover(function(){
+				$(this).find('.description').stop(true,true).animate({
+					'top': '0px'
+				}, window.animGalleryHoverDelay);
+			}, function(){
+				$(this).find('.description').stop(true,true).animate({
+					'top': '270px'
+				}, window.animGalleryHoverDelay);
+			});
+		}
+		
+		function bindGalleryEvt(){
+			$('.gallery a').click(function(e){
+				e.preventDefault();
+				goToBanner($(this).attr('href'));
+				updateItemSlotIndicator();
+			});
+		}
+		
+		function goToBanner(target){
+			clearInterval(animTimer);
+			var bannerContainer = $('#banner ul');
+			var targetBannerNum = target.replace('#', '');
+			var targetPanel = $(bannerContainer).find('li:nth('+(targetBannerNum-1)+')').position().left;
+			var bannerLeftLoc = 0 - targetPanel;
+			
+			window.curBanner = targetBannerNum;
+			
+			$(bannerContainer).css('left', bannerLeftLoc+'px');
+			//$(window).scrollTop($(bannerContainer).offset().top + window.topOffset);
+			fbAnimScrollToY($(bannerContainer).offset().top + window.topOffset, window.animScrollToDelay);
+		}
+	</script>
+</body>
+</html>
